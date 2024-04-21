@@ -29,7 +29,7 @@ var precedences = map[token.TokenType]int{
 	token.MINUS:    SUM,
 	token.SLASH:    PRODUCT,
 	token.ASTERISK: PRODUCT,
-	token.LPAREN:	CALL,
+	token.LPAREN:   CALL,
 }
 
 type (
@@ -91,7 +91,6 @@ func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {
 	return exp
 }
 
-
 func (p *Parser) parseCallArguments() []ast.Expression {
 	args := []ast.Expression{}
 
@@ -100,13 +99,12 @@ func (p *Parser) parseCallArguments() []ast.Expression {
 		return args
 	}
 
-
 	for !p.curTokenIs(token.RPAREN) {
 		p.nextToken()
 		argument := p.parseExpression(LOWEST)
 		args = append(args, argument)
-		
-		if !(p.peekTokenIs(token.COMMA) || p.peekTokenIs(token.RPAREN)){
+
+		if !(p.peekTokenIs(token.COMMA) || p.peekTokenIs(token.RPAREN)) {
 			msg := fmt.Sprintf("expected a comma. got=%s", p.curToken)
 			p.errors = append(p.errors, msg)
 			return nil
@@ -149,7 +147,7 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 		parameter, _ := p.parseIdentifier().(*ast.Identifier)
 		parameters = append(parameters, parameter)
 
-		if !(p.peekTokenIs(token.COMMA) || p.peekTokenIs(token.RPAREN)){
+		if !(p.peekTokenIs(token.COMMA) || p.peekTokenIs(token.RPAREN)) {
 			msg := fmt.Sprintf("expected a comma. got=%s", p.curToken)
 			p.errors = append(p.errors, msg)
 			return nil

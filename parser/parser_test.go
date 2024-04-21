@@ -65,7 +65,7 @@ func testBooleanLiteral(t *testing.T, exp ast.Expression, value bool) bool {
 			value, bo.TokenLiteral())
 		return false
 	}
-	
+
 	return true
 }
 
@@ -128,9 +128,9 @@ func testInfixExpression(t *testing.T, exp ast.Expression, left interface{},
 
 func TestLetStatements(t *testing.T) {
 	tests := []struct {
-		input string
+		input              string
 		expectedIdentifier string
-		expectedValue interface{}
+		expectedValue      interface{}
 	}{
 		{"let x = 5;", "x", 5},
 		{"let y = true;", "y", true},
@@ -162,7 +162,7 @@ func TestLetStatements(t *testing.T) {
 
 func TestReturnStatements(t *testing.T) {
 	tests := []struct {
-		input string
+		input               string
 		expectedReturnValue interface{}
 	}{
 		{"return 5;", 5},
@@ -337,8 +337,8 @@ func TestBooleanExpression(t *testing.T) {
 
 func TestParsingPrefixExpressions(t *testing.T) {
 	prefixTests := []struct {
-		input        string
-		operator     string
+		input      string
+		operator   string
 		rightValue interface{}
 	}{
 		{"!5;", "!", 5},
@@ -364,7 +364,7 @@ func TestParsingPrefixExpressions(t *testing.T) {
 		}
 
 		if !testPrefixExpression(t, stmt.Expression, tt.operator, tt.rightValue) {
-			return 
+			return
 		}
 	}
 }
@@ -554,7 +554,7 @@ func TestIfExpression(t *testing.T) {
 
 	if !testInfixExpression(t, exp.Condition, "x", "<", "y") {
 		return
-	}	
+	}
 
 	if len(exp.Consequence.Statements) != 1 {
 		t.Errorf("consequence is not 1 statements. got=%d\n",
@@ -603,7 +603,7 @@ func TestIfElseExpression(t *testing.T) {
 
 	if !testInfixExpression(t, exp.Condition, "x", "<", "y") {
 		return
-	}	
+	}
 
 	if len(exp.Consequence.Statements) != 1 {
 		t.Errorf("consequence is not 1 statements. got=%d\n",
@@ -636,7 +636,7 @@ func TestIfElseExpression(t *testing.T) {
 	}
 }
 
-func TestFunctionalLiteralParsing(t * testing.T) {
+func TestFunctionalLiteralParsing(t *testing.T) {
 	input := `fn(x, y) { x + y; }`
 
 	l := lexer.New(input)
@@ -685,7 +685,7 @@ func TestFunctionalLiteralParsing(t * testing.T) {
 
 func TestFunctionalParameterParsing(t *testing.T) {
 	tests := []struct {
-		input string
+		input          string
 		expectedParams []string
 	}{
 		{input: "fn() {};", expectedParams: []string{}},
