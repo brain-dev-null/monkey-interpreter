@@ -29,6 +29,7 @@ var precedences = map[token.TokenType]int{
 	token.MINUS:    SUM,
 	token.SLASH:    PRODUCT,
 	token.ASTERISK: PRODUCT,
+	token.LPAREN:	CALL,
 }
 
 type (
@@ -76,10 +77,45 @@ func New(l *lexer.Lexer) *Parser {
 
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 
+	p.registerInfix(token.LPAREN, p.parseCallExpression)
+
 	p.nextToken()
 	p.nextToken()
 
 	return p
+}
+
+func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {
+	exp := &ast.CallExpression{Token: p.curToken, Function: function}
+	exp.Arguments = p.parseCallArguments()
+	return exp
+}
+
+
+func (p *Parser) parseCallArguments() []ast.Expression {
+	args := []ast.Expression{}
+
+	if p.peekTokenIs(token.RPAREN) {
+		p.nextToken()
+		return args
+	}
+
+
+	for !p.curTokenIs(token.RPAREN) {
+		p.nextToken()
+		argument := p.parseExpression(LOWEST)
+		args = append(args, argument)
+		
+		if !(p.peekTokenIs(token.COMMA) || p.peekTokenIs(token.RPAREN)){
+			msg := fmt.Sprintf("expected a comma. got=%s", p.curToken)
+			p.errors = append(p.errors, msg)
+			return nil
+		}
+
+		p.nextToken()
+	}
+
+	return args
 }
 
 func (p *Parser) parseFunctionLiteral() ast.Expression {
