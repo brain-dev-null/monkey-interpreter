@@ -74,10 +74,55 @@ func New(l *lexer.Lexer) *Parser {
 
 	p.registerPrefix(token.IF, p.parseIfExpression)
 
+	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
+
 	p.nextToken()
 	p.nextToken()
 
 	return p
+}
+
+func (p *Parser) parseFunctionLiteral() ast.Expression {
+	lit := &ast.FunctionLiteral{Token: p.curToken}
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+
+	lit.Parameters = p.parseFunctionParameters()
+
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+
+	lit.Body = p.parseBlockStatement()
+
+	return lit
+}
+
+func (p *Parser) parseFunctionParameters() []*ast.Identifier {
+	parameters := []*ast.Identifier{}
+
+	if p.peekTokenIs(token.RPAREN) {
+		p.nextToken()
+		return parameters
+	}
+
+	for !p.curTokenIs(token.RPAREN) {
+		p.nextToken()
+		parameter, _ := p.parseIdentifier().(*ast.Identifier)
+		parameters = append(parameters, parameter)
+
+		if !(p.peekTokenIs(token.COMMA) || p.peekTokenIs(token.RPAREN)){
+			msg := fmt.Sprintf("expected a comma. got=%s", p.curToken)
+			p.errors = append(p.errors, msg)
+			return nil
+		}
+
+		p.nextToken()
+	}
+
+	return parameters
 }
 
 func (p *Parser) parseIfExpression() ast.Expression {
