@@ -115,7 +115,7 @@ func TestBangOperator(t *testing.T) {
 
 func TestReturnStatements(t *testing.T) {
 	tests := []struct {
-		input string
+		input    string
 		expected int64
 	}{
 		{"return 10;", 10},
